@@ -75,7 +75,7 @@ const router = new Router({
               path: "/form/step-form",
               name: "stepform",
               component: () =>
-                import(/* webpackChunkName: "form" */ "./views/Forms/StepForm/index"),
+                import(/* webpackChunkName: "form" */ "./views/Forms/StepForm"),
               children: [
                 {
                   path: "/form/step-form",
