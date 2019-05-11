@@ -1,5 +1,5 @@
 <template>
-  <div>footer</div>
+  <div>Ant Design Vue Learning ©2019 Created by Kang</div>
 </template>
 
 <script>
