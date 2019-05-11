@@ -114,7 +114,10 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  NProgress.start();
+  if (to.path !== from.path) {
+    // 针对query变化时不用显示加载效果
+    NProgress.start();
+  }
   next();
 });
 
