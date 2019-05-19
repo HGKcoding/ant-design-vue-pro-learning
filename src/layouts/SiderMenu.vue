@@ -23,6 +23,7 @@
 
 <script>
 import SubMenu from "./SubMenu";
+import { check } from "../utils/auth";
 export default {
   name: "SiderMenu",
   props: {
@@ -54,7 +55,10 @@ export default {
   methods: {
     getMenuData(routes = [], parentKeys = [], selectedKey) {
       const menuData = [];
-      routes.forEach(item => {
+      for (let item of routes) {
+        if (item.meta && item.meta.authority && !check(item.meta.authority)) {
+          break;
+        }
         if (item.name && !item.hideInMenu) {
           this.openKeysMap[item.path] = parentKeys;
           this.selectedKeysMap[item.path] = [selectedKey || item.path];
@@ -66,7 +70,6 @@ export default {
               item.path
             ]);
           } else {
-            // 对分步表单进行处理
             this.getMenuData(
               item.children,
               selectedKey ? parentKeys : [...parentKeys, item.path],
@@ -83,7 +86,8 @@ export default {
             ...this.getMenuData(item.children, [...parentKeys, item.path])
           );
         }
-      });
+      }
+
       return menuData;
     }
   }
