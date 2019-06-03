@@ -15,8 +15,15 @@
             :dataSource="dataSource1"
             :pagination="false"
           >
-            <span slot="period" slot-scope="period">
-              <a-range-picker v-show="period" :defaultValue="period" />
+            <span slot="period" slot-scope="period, record">
+              <a-range-picker
+                v-show="period"
+                :defaultValue="period"
+                @change="
+                  (dates, dateStrings) =>
+                    onDateChange(dates, dateStrings, record.key)
+                "
+              />
             </span>
             <span slot="params" slot-scope="params, record">
               <a-input
@@ -33,8 +40,11 @@
                 ></ant-icon>
               </span>
             </span>
-            <span slot="ischecked" slot-scope="ischecked">
-              <a-switch :defaultChecked="ischecked" @change="onSwitchChange" />
+            <span slot="ischecked" slot-scope="ischecked, record">
+              <a-switch
+                :defaultChecked="ischecked"
+                @change="checked => onSwitchChange(checked, record.key)"
+              />
             </span>
           </a-table>
         </a-tab-pane>
@@ -127,11 +137,25 @@ export default {
     AntIcon
   },
   methods: {
-    onSwitchChange(checked) {
-      console.log(checked);
+    onDateChange(dates, dateStrings, key) {
+      console.log(dateStrings);
+      this.changeDataSource(dates, key, "period");
+    },
+    onSwitchChange(checked, key) {
+      this.changeDataSource(checked, key, "switch");
     },
     onInputChange(value, key) {
+      this.changeDataSource(value, key, "params");
+    },
+    changeDataSource(value, key, col) {
       console.log(value, key);
+      const newDataSource1 = [...this.dataSource1];
+      // 找到是具体数值变换的元素
+      const target = newDataSource1.filter(item => item.key === key)[0];
+      if (target) {
+        target[col] = value;
+        this.dataSource1 = newDataSource1;
+      }
     },
     onEdit() {}
   }
