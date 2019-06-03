@@ -10,7 +10,11 @@ import {
   Drawer,
   Radio,
   Form,
-  Input
+  Input,
+  Tabs,
+  Table,
+  DatePicker,
+  Switch
 } from "ant-design-vue";
 import Authorized from "./components/Authorized";
 import Auth from "./directives/auth";
@@ -24,8 +28,12 @@ Vue.use(Drawer);
 Vue.use(Radio);
 Vue.use(Form);
 Vue.use(Input);
-Vue.component("Authorized", Authorized);
-Vue.use(Auth);
+Vue.component("Authorized", Authorized); // 权限组件
+Vue.use(Auth); // 权限指令
+Vue.use(Tabs);
+Vue.use(Table);
+Vue.use(DatePicker);
+Vue.use(Switch);
 
 new Vue({
   router,

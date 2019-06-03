@@ -114,6 +114,21 @@ const router = new Router({
               ]
             }
           ]
+        },
+        {
+          path: "/point",
+          name: "point",
+          meta: { icon: "file-ppt", title: "积分" },
+          component: { render: h => h("router-view") },
+          children: [
+            {
+              path: "/point/point-strategy",
+              name: "point-strategy",
+              meta: { title: "积分策略" },
+              component: () =>
+                import(/* webpackChunkName: "point" */ "./views/Point/PointStrategy")
+            }
+          ]
         }
       ]
     },
