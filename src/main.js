@@ -15,7 +15,8 @@ import {
   Tabs,
   Table,
   DatePicker,
-  Switch
+  Switch,
+  Select
 } from "ant-design-vue";
 import Authorized from "./components/Authorized";
 import Auth from "./directives/auth";
@@ -35,6 +36,7 @@ Vue.use(Tabs);
 Vue.use(Table);
 Vue.use(DatePicker);
 Vue.use(Switch);
+Vue.use(Select);
 
 new Vue({
   router,
