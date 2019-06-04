@@ -14,11 +14,17 @@
             :columns="columns1"
             :dataSource="dataSource1"
             :pagination="false"
+            :rowClassName="
+              (record, index) => {
+                return addRowClass(record, index);
+              }
+            "
           >
             <span slot="period" slot-scope="period, record">
               <a-range-picker
                 v-show="period"
                 :defaultValue="period"
+                :disabled="record.disabled"
                 @change="
                   (dates, dateStrings) =>
                     onDateChange(dates, dateStrings, record.key)
@@ -27,12 +33,15 @@
             </span>
             <span slot="params" slot-scope="params, record">
               <a-input
-                v-if="params && !record.editable"
+                v-if="params && record.editable"
+                :disabled="record.disabled"
                 :defaultValue="params"
                 @change="e => onInputChange(e.target.value, record.key)"
+                @pressEnter="e => onInputEnter(e.target.value, record.key)"
+                @blur="e => onInputBlur(e.target.value, record.key)"
               ></a-input>
-              <span v-else @click="onEdit">
-                {{ params }}
+              <span v-else @click="e => onEdit(e.target.value, record.key)">
+                {{ params }}{{ record.times ? "倍" : "" }}
                 <ant-icon
                   v-if="params"
                   type="icon-edit"
@@ -83,36 +92,41 @@ export default {
   name: "",
   data() {
     return {
-      editable: false,
       columns1: [
         {
           dataIndex: "config",
           key: "config",
-          title: "配置项"
+          title: "配置项",
+          width: "20%"
         },
         {
           dataIndex: "period",
           key: "period",
           title: "周期",
           slots: { title: "period" },
-          scopedSlots: { customRender: "period" }
+          scopedSlots: { customRender: "period" },
+          width: "45%"
         },
         {
           dataIndex: "params",
           key: "params",
           title: "设置参数",
           slots: { title: "params" },
-          scopedSlots: { customRender: "params" }
+          scopedSlots: { customRender: "params" },
+          width: "20%"
         },
         {
           dataIndex: "switch",
           key: "switch",
           title: "开关",
           slots: { title: "ischecked" },
-          scopedSlots: { customRender: "ischecked" }
+          scopedSlots: { customRender: "ischecked" },
+          width: "15%"
         }
       ],
       dataSource1: [
+        // switch和disabled必须是相反的; disabled和background相同
+        // times控制是否有倍数
         {
           key: 0,
           config: "积分有效期",
@@ -121,14 +135,60 @@ export default {
             moment(OneYearLater, "YYYY/MM/DD")
           ],
           params: "",
-          switch: true
+          times: false,
+          switch: true,
+          disabled: false,
+          editable: false
         },
         {
           key: 1,
           config: "个人积分封顶",
           period: null,
           params: "3000",
-          switch: false
+          times: false,
+          switch: false,
+          disabled: true,
+          editable: false
+        },
+        {
+          key: 2,
+          config: "工作日晚间学习奖励（20点后）",
+          period: null,
+          params: "2",
+          times: true,
+          switch: true,
+          disabled: false,
+          editable: false
+        },
+        {
+          key: 3,
+          config: "周末学习奖励",
+          period: null,
+          params: "2",
+          times: true,
+          switch: false,
+          disabled: true,
+          editable: false
+        },
+        {
+          key: 4,
+          config: "法定假日学习奖励",
+          period: null,
+          params: "2",
+          times: true,
+          switch: false,
+          disabled: true,
+          editable: false
+        },
+        {
+          key: 5,
+          config: "等级提升奖励",
+          period: null,
+          params: "10",
+          times: false,
+          switch: false,
+          disabled: true,
+          editable: false
         }
       ]
     };
@@ -145,7 +205,27 @@ export default {
       this.changeDataSource(checked, key, "switch");
     },
     onInputChange(value, key) {
+      if (value <= 0) return;
       this.changeDataSource(value, key, "params");
+    },
+    onInputEnter(value, key) {
+      if (value <= 0) return;
+      const newDataSource1 = [...this.dataSource1];
+      const target = newDataSource1.filter(item => item.key === key)[0];
+      if (target) {
+        target.params = value;
+        target.editable = false;
+        this.dataSource1 = newDataSource1;
+      }
+    },
+    onInputBlur(value, key) {
+      console.log("blur:", value, key);
+      const newDataSource1 = [...this.dataSource1];
+      const target = newDataSource1.filter(item => item.key === key)[0];
+      if (target) {
+        target.editable = false;
+        this.dataSource1 = newDataSource1;
+      }
     },
     changeDataSource(value, key, col) {
       console.log(value, key);
@@ -153,11 +233,27 @@ export default {
       // 找到是具体数值变换的元素
       const target = newDataSource1.filter(item => item.key === key)[0];
       if (target) {
+        col === "switch" &&
+          (target.disabled = !value) &&
+          (target.background = !value);
         target[col] = value;
         this.dataSource1 = newDataSource1;
       }
     },
-    onEdit() {}
+    onEdit(value, key) {
+      const newDataSource1 = [...this.dataSource1];
+      const target = newDataSource1.filter(item => item.key === key)[0];
+      if (target) {
+        target.editable = true;
+        this.dataSource1 = newDataSource1;
+      }
+    },
+    addRowClass(record, index) {
+      console.log(record, index);
+      if (!record.switch) {
+        return "row-bg-gray";
+      }
+    }
   }
 };
 </script>
