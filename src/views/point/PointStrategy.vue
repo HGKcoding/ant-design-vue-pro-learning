@@ -40,7 +40,7 @@
                 @pressEnter="e => onInputEnter(e.target.value, record.key)"
                 @blur="e => onInputBlur(e.target.value, record.key)"
               ></a-input>
-              <span v-else @click="e => onEdit(e.target.value, record.key)">
+              <span v-else @click="e => onEdit(e.target.value, record)">
                 {{ params }}{{ record.times ? "倍" : "" }}
                 <ant-icon
                   v-if="params"
@@ -240,9 +240,10 @@ export default {
         this.dataSource1 = newDataSource1;
       }
     },
-    onEdit(value, key) {
+    onEdit(value, record) {
+      if (!record.switch) return;
       const newDataSource1 = [...this.dataSource1];
-      const target = newDataSource1.filter(item => item.key === key)[0];
+      const target = newDataSource1.filter(item => item.key === record.key)[0];
       if (target) {
         target.editable = true;
         this.dataSource1 = newDataSource1;
