@@ -7,8 +7,8 @@
             <ant-icon
               type="icon-jichupeizhi"
               :style="{ fontSize: '20px' }"
-            ></ant-icon
-            >基础配置
+            ></ant-icon>
+            {{ $t("message")["app.point.pointStrategy.basicConfig"] }}
           </span>
           <a-table
             :columns="columns1"

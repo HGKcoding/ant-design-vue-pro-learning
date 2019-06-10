@@ -1,7 +1,11 @@
 import Vue from "vue";
+import VueI18n from "vue-i18n";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import zhCN from "./locale/zhCN";
+import enUS from "./locale/enUS";
+import queryString from "query-string"; // 解析URL的库
 import "./style/override/ant-table.less";
 import {
   Button,
@@ -16,7 +20,9 @@ import {
   Table,
   DatePicker,
   Switch,
-  Select
+  Select,
+  LocaleProvider,
+  Dropdown
 } from "ant-design-vue";
 import Authorized from "./components/Authorized";
 import Auth from "./directives/auth";
@@ -37,8 +43,23 @@ Vue.use(Table);
 Vue.use(DatePicker);
 Vue.use(Switch);
 Vue.use(Select);
+Vue.use(LocaleProvider);
+Vue.use(Dropdown);
+Vue.use(VueI18n);
 
+const i18n = new VueI18n({
+  locale: queryString.parse(location.search).locale || "zhCN",
+  messages: {
+    zhCN: {
+      message: zhCN
+    },
+    enUS: {
+      message: enUS
+    }
+  }
+});
 new Vue({
+  i18n,
   router,
   store,
   render: h => h(App)
